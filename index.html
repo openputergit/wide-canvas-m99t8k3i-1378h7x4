@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Customization Panel - Bonzai London</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .custom-shadow {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg custom-shadow">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold mb-6">AI Customization Settings</h1>
+
+            <!-- AI Tone & Personality -->
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold mb-4">AI Tone & Personality</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block mb-2">Tone</label>
+                        <select class="w-full p-2 border rounded" id="tone">
+                            <option value="formal">Formal</option>
+                            <option value="casual" selected>Casual</option>
+                            <option value="friendly">Friendly</option>
+                            <option value="playful">Playful</option>
+                            <option value="neutral">Neutral</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2">Personality Level</label>
+                        <select class="w-full p-2 border rounded" id="personality">
+                            <option value="professional">Professional</option>
+                            <option value="witty">Witty</option>
+                            <option value="chill">Chill</option>
+                            <option value="empathetic">Empathetic</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Business-Specific Phrases -->
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold mb-4">Business-Specific Phrases</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block mb-2">Tagline or Slogan</label>
+                        <input type="text" class="w-full p-2 border rounded" value="Let's make it memorable!" id="tagline">
+                    </div>
+                    <div>
+                        <label class="block mb-2">Brand Terms</label>
+                        <input type="text" class="w-full p-2 border rounded" value="Bonzai Bites, Zen Zone" id="brandTerms">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trigger-Based Auto Replies -->
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold mb-4">Trigger-Based Auto Replies</h2>
+                <div id="triggerContainer" class="space-y-4">
+                    <!-- Dynamic trigger pairs will be added here -->
+                </div>
+                <button onclick="addTriggerPair()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    <i class="bi bi-plus-lg"></i> Add New Trigger
+                </button>
+            </section>
+
+            <!-- Fallback Behavior -->
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold mb-4">Fallback Behavior</h2>
+                <div class="space-y-2">
+                    <label class="flex items-center">
+                        <input type="radio" name="fallback" value="default" checked class="mr-2">
+                        Show default message
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="fallback" value="route" class="mr-2">
+                        Route to human staff
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="fallback" value="log" class="mr-2">
+                        Log unanswered for review
+                    </label>
+                </div>
+            </section>
+
+            <!-- Response Settings -->
+            <section class="mb-8">
+                <h2 class="text-xl font-semibold mb-4">Response Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block mb-2">Response Style</label>
+                        <select class="w-full p-2 border rounded" id="responseStyle">
+                            <option value="short">Short</option>
+                            <option value="balanced" selected>Balanced</option>
+                            <option value="detailed">Detailed</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2">Message Pacing</label>
+                        <select class="w-full p-2 border rounded" id="messagePacing">
+                            <option value="instant">Instant</option>
+                            <option value="typing">Typing delay</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Action Buttons -->
+            <div class="flex space-x-4 pt-4 border-t">
+                <button onclick="saveSettings()" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                    <i class="bi bi-save"></i> Save
+                </button>
+                <button onclick="editSettings()" class="bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-600">
+                    <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button onclick="resetDefault()" class="bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600">
+                    <i class="bi bi-arrow-counterclockwise"></i> Default
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initial trigger pairs
+        const initialTriggers = [
+            { trigger: "opening hours", response: "We're open from 12pm to 11pm all week!" },
+            { trigger: "return policy", response: "Sure! You can return items within 7 days." },
+            { trigger: "special offers", response: "Check out our latest offers on Instagram @bonzailondon!" }
+        ];
+
+        function addTriggerPair(trigger = "", response = "") {
+            const container = document.getElementById('triggerContainer');
+            const pairDiv = document.createElement('div');
+            pairDiv.className = 'flex space-x-2';
+            pairDiv.innerHTML = `
+                <input type="text" placeholder="Trigger keyword" class="flex-1 p-2 border rounded" value="${trigger}">
+                <input type="text" placeholder="Auto-response" class="flex-1 p-2 border rounded" value="${response}">
+                <button onclick="this.parentElement.remove()" class="bg-red-500 text-white px-3 rounded hover:bg-red-600">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            container.appendChild(pairDiv);
+        }
+
+        // Initialize default trigger pairs
+        window.onload = function() {
+            initialTriggers.forEach(pair => {
+                addTriggerPair(pair.trigger, pair.response);
+            });
+        };
+
+        function saveSettings() {
+            // Collect all settings
+            const settings = {
+                tone: document.getElementById('tone').value,
+                personality: document.getElementById('personality').value,
+                tagline: document.getElementById('tagline').value,
+                brandTerms: document.getElementById('brandTerms').value,
+                // Add other settings...
+            };
+            alert('Settings saved successfully!');
+            console.log('Saved settings:', settings);
+        }
+
+        function editSettings() {
+            // Enable all inputs
+            document.querySelectorAll('input, select').forEach(el => {
+                el.disabled = false;
+            });
+            alert('Now you can edit all settings.');
+        }
+
+        function resetDefault() {
+            if(confirm('Are you sure you want to reset to default settings?')) {
+                document.getElementById('tone').value = 'casual';
+                document.getElementById('personality').value = 'professional';
+                document.getElementById('tagline').value = "Let's make it memorable!";
+                document.getElementById('brandTerms').value = "Bonzai Bites, Zen Zone";
+                // Reset other fields...
+                
+                // Reset trigger pairs
+                document.getElementById('triggerContainer').innerHTML = '';
+                initialTriggers.forEach(pair => {
+                    addTriggerPair(pair.trigger, pair.response);
+                });
+                alert('Settings reset to default!');
+            }
+        }
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
